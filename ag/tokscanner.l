@@ -40,7 +40,8 @@ and	     return AND;
 "-"	     return '-'; 
 "@"	     return '@'; 
 
-{identifier}     return ID; 
+{identifier}     return ID; @{ @ID.name@ = strdup(yytext); @}
+ 
 {hex}      	     return NUM; 
 {dec}  	         return NUM; 
 

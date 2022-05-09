@@ -1,0 +1,1294 @@
+Grammar
+
+    0 $accept: yyyAugNonterm $end
+
+    1 $@1: %empty
+
+    2 yyyAugNonterm: $@1 Start
+
+    3 Start: Program
+
+    4 Program: %empty
+    5        | Program Def ';'
+
+    6 Def: ID '(' Pars ')' END
+    7    | ID '(' Pars ')' Stats END
+    8    | ID '{' Pars '}' '(' Pars ')' END
+    9    | ID '{' Pars '}' '(' Pars ')' Stats END
+
+   10 Pars: ID
+   11     | Parscsv ID
+
+   12 Parscsv: ID ','
+   13        | Parscsv ID ','
+
+   14 Stats: Stat ';'
+   15      | Labeldefs Stat ';'
+   16      | Stats Stat ';'
+   17      | Stats Labeldefs Stat ';'
+
+   18 Labeldefs: Labeldef
+   19          | Labeldefs Labeldef
+
+   20 Labeldef: ID ':'
+
+   21 Stat: RETURN Expr
+   22     | GOTO ID
+   23     | IF Expr GOTO ID
+   24     | VAR ID '=' Expr
+   25     | Lexpr '=' Expr
+   26     | Term
+
+   27 Lexpr: ID
+   28      | Term '[' Expr ']'
+
+   29 Expr: Term
+   30     | NotOrMinusChain Term
+   31     | Term Termaddsv
+   32     | Term Termmulsv
+   33     | Term Termandsv
+   34     | Term '>' Term
+   35     | Term '=' Term
+
+   36 NotOrMinusChain: NOT
+   37                | '-'
+   38                | NotOrMinusChain NOT
+   39                | NotOrMinusChain '-'
+
+   40 Termaddsv: '+' Term
+   41          | Termaddsv '+' Term
+
+   42 Termmulsv: '*' Term
+   43          | Termmulsv '*' Term
+
+   44 Termandsv: AND Term
+   45          | Termandsv AND Term
+
+   46 Term: '(' Expr ')'
+   47     | NUM
+   48     | Term '[' Expr ']'
+   49     | ID
+   50     | ID '(' Exprs ')'
+   51     | ID '{' Exprs '}'
+   52     | Term '@' '(' Exprs ')'
+
+   53 Exprs: Expr
+   54      | Exprcsv Expr
+
+   55 Exprcsv: Expr ','
+   56        | Exprcsv Expr ','
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 6 7 8 9 46 50 52
+')' (41) 6 7 8 9 46 50 52
+'*' (42) 42 43
+'+' (43) 40 41
+',' (44) 12 13 55 56
+'-' (45) 37 39
+':' (58) 20
+';' (59) 5 14 15 16 17
+'=' (61) 24 25 35
+'>' (62) 34
+'@' (64) 52
+'[' (91) 28 48
+']' (93) 28 48
+'{' (123) 8 9 51
+'}' (125) 8 9 51
+error (256)
+END (258) 6 7 8 9
+RETURN (259) 21
+GOTO (260) 22 23
+IF (261) 23
+VAR (262) 24
+NOT (263) 36 38
+AND (264) 44 45
+ID (265) 6 7 8 9 10 11 12 13 20 22 23 24 27 49 50 51
+NUM (266) 47
+
+
+Nonterminals, with rules where they appear
+
+$accept (27)
+    on left: 0
+yyyAugNonterm (28)
+    on left: 2, on right: 0
+$@1 (29)
+    on left: 1, on right: 2
+Start (30)
+    on left: 3, on right: 2
+Program (31)
+    on left: 4 5, on right: 3 5
+Def (32)
+    on left: 6 7 8 9, on right: 5
+Pars (33)
+    on left: 10 11, on right: 6 7 8 9
+Parscsv (34)
+    on left: 12 13, on right: 11 13
+Stats (35)
+    on left: 14 15 16 17, on right: 7 9 16 17
+Labeldefs (36)
+    on left: 18 19, on right: 15 17 19
+Labeldef (37)
+    on left: 20, on right: 18 19
+Stat (38)
+    on left: 21 22 23 24 25 26, on right: 14 15 16 17
+Lexpr (39)
+    on left: 27 28, on right: 25
+Expr (40)
+    on left: 29 30 31 32 33 34 35, on right: 21 23 24 25 28 46 48 53
+    54 55 56
+NotOrMinusChain (41)
+    on left: 36 37 38 39, on right: 30 38 39
+Termaddsv (42)
+    on left: 40 41, on right: 31 41
+Termmulsv (43)
+    on left: 42 43, on right: 32 43
+Termandsv (44)
+    on left: 44 45, on right: 33 45
+Term (45)
+    on left: 46 47 48 49 50 51 52, on right: 26 28 29 30 31 32 33 34
+    35 40 41 42 43 44 45 48 52
+Exprs (46)
+    on left: 53 54, on right: 50 51 52
+Exprcsv (47)
+    on left: 55 56, on right: 54 56
+
+
+State 0
+
+    0 $accept: . yyyAugNonterm $end
+
+    $default  reduce using rule 1 ($@1)
+
+    yyyAugNonterm  go to state 1
+    $@1            go to state 2
+
+
+State 1
+
+    0 $accept: yyyAugNonterm . $end
+
+    $end  shift, and go to state 3
+
+
+State 2
+
+    2 yyyAugNonterm: $@1 . Start
+
+    $default  reduce using rule 4 (Program)
+
+    Start    go to state 4
+    Program  go to state 5
+
+
+State 3
+
+    0 $accept: yyyAugNonterm $end .
+
+    $default  accept
+
+
+State 4
+
+    2 yyyAugNonterm: $@1 Start .
+
+    $default  reduce using rule 2 (yyyAugNonterm)
+
+
+State 5
+
+    3 Start: Program .
+    5 Program: Program . Def ';'
+
+    ID  shift, and go to state 6
+
+    $default  reduce using rule 3 (Start)
+
+    Def  go to state 7
+
+
+State 6
+
+    6 Def: ID . '(' Pars ')' END
+    7    | ID . '(' Pars ')' Stats END
+    8    | ID . '{' Pars '}' '(' Pars ')' END
+    9    | ID . '{' Pars '}' '(' Pars ')' Stats END
+
+    '('  shift, and go to state 8
+    '{'  shift, and go to state 9
+
+
+State 7
+
+    5 Program: Program Def . ';'
+
+    ';'  shift, and go to state 10
+
+
+State 8
+
+    6 Def: ID '(' . Pars ')' END
+    7    | ID '(' . Pars ')' Stats END
+
+    ID  shift, and go to state 11
+
+    Pars     go to state 12
+    Parscsv  go to state 13
+
+
+State 9
+
+    8 Def: ID '{' . Pars '}' '(' Pars ')' END
+    9    | ID '{' . Pars '}' '(' Pars ')' Stats END
+
+    ID  shift, and go to state 11
+
+    Pars     go to state 14
+    Parscsv  go to state 13
+
+
+State 10
+
+    5 Program: Program Def ';' .
+
+    $default  reduce using rule 5 (Program)
+
+
+State 11
+
+   10 Pars: ID .
+   12 Parscsv: ID . ','
+
+    ','  shift, and go to state 15
+
+    $default  reduce using rule 10 (Pars)
+
+
+State 12
+
+    6 Def: ID '(' Pars . ')' END
+    7    | ID '(' Pars . ')' Stats END
+
+    ')'  shift, and go to state 16
+
+
+State 13
+
+   11 Pars: Parscsv . ID
+   13 Parscsv: Parscsv . ID ','
+
+    ID  shift, and go to state 17
+
+
+State 14
+
+    8 Def: ID '{' Pars . '}' '(' Pars ')' END
+    9    | ID '{' Pars . '}' '(' Pars ')' Stats END
+
+    '}'  shift, and go to state 18
+
+
+State 15
+
+   12 Parscsv: ID ',' .
+
+    $default  reduce using rule 12 (Parscsv)
+
+
+State 16
+
+    6 Def: ID '(' Pars ')' . END
+    7    | ID '(' Pars ')' . Stats END
+
+    END     shift, and go to state 19
+    RETURN  shift, and go to state 20
+    GOTO    shift, and go to state 21
+    IF      shift, and go to state 22
+    VAR     shift, and go to state 23
+    ID      shift, and go to state 24
+    NUM     shift, and go to state 25
+    '('     shift, and go to state 26
+
+    Stats      go to state 27
+    Labeldefs  go to state 28
+    Labeldef   go to state 29
+    Stat       go to state 30
+    Lexpr      go to state 31
+    Term       go to state 32
+
+
+State 17
+
+   11 Pars: Parscsv ID .
+   13 Parscsv: Parscsv ID . ','
+
+    ','  shift, and go to state 33
+
+    $default  reduce using rule 11 (Pars)
+
+
+State 18
+
+    8 Def: ID '{' Pars '}' . '(' Pars ')' END
+    9    | ID '{' Pars '}' . '(' Pars ')' Stats END
+
+    '('  shift, and go to state 34
+
+
+State 19
+
+    6 Def: ID '(' Pars ')' END .
+
+    $default  reduce using rule 6 (Def)
+
+
+State 20
+
+   21 Stat: RETURN . Expr
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 38
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 21
+
+   22 Stat: GOTO . ID
+
+    ID  shift, and go to state 41
+
+
+State 22
+
+   23 Stat: IF . Expr GOTO ID
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 42
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 23
+
+   24 Stat: VAR . ID '=' Expr
+
+    ID  shift, and go to state 43
+
+
+State 24
+
+   20 Labeldef: ID . ':'
+   27 Lexpr: ID .
+   49 Term: ID .
+   50     | ID . '(' Exprs ')'
+   51     | ID . '{' Exprs '}'
+
+    '('  shift, and go to state 44
+    '{'  shift, and go to state 45
+    ':'  shift, and go to state 46
+
+    '='       reduce using rule 27 (Lexpr)
+    $default  reduce using rule 49 (Term)
+
+
+State 25
+
+   47 Term: NUM .
+
+    $default  reduce using rule 47 (Term)
+
+
+State 26
+
+   46 Term: '(' . Expr ')'
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 47
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 27
+
+    7 Def: ID '(' Pars ')' Stats . END
+   16 Stats: Stats . Stat ';'
+   17      | Stats . Labeldefs Stat ';'
+
+    END     shift, and go to state 48
+    RETURN  shift, and go to state 20
+    GOTO    shift, and go to state 21
+    IF      shift, and go to state 22
+    VAR     shift, and go to state 23
+    ID      shift, and go to state 24
+    NUM     shift, and go to state 25
+    '('     shift, and go to state 26
+
+    Labeldefs  go to state 49
+    Labeldef   go to state 29
+    Stat       go to state 50
+    Lexpr      go to state 31
+    Term       go to state 32
+
+
+State 28
+
+   15 Stats: Labeldefs . Stat ';'
+   19 Labeldefs: Labeldefs . Labeldef
+
+    RETURN  shift, and go to state 20
+    GOTO    shift, and go to state 21
+    IF      shift, and go to state 22
+    VAR     shift, and go to state 23
+    ID      shift, and go to state 24
+    NUM     shift, and go to state 25
+    '('     shift, and go to state 26
+
+    Labeldef  go to state 51
+    Stat      go to state 52
+    Lexpr     go to state 31
+    Term      go to state 32
+
+
+State 29
+
+   18 Labeldefs: Labeldef .
+
+    $default  reduce using rule 18 (Labeldefs)
+
+
+State 30
+
+   14 Stats: Stat . ';'
+
+    ';'  shift, and go to state 53
+
+
+State 31
+
+   25 Stat: Lexpr . '=' Expr
+
+    '='  shift, and go to state 54
+
+
+State 32
+
+   26 Stat: Term .
+   28 Lexpr: Term . '[' Expr ']'
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 55
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 26 (Stat)
+
+
+State 33
+
+   13 Parscsv: Parscsv ID ',' .
+
+    $default  reduce using rule 13 (Parscsv)
+
+
+State 34
+
+    8 Def: ID '{' Pars '}' '(' . Pars ')' END
+    9    | ID '{' Pars '}' '(' . Pars ')' Stats END
+
+    ID  shift, and go to state 11
+
+    Pars     go to state 57
+    Parscsv  go to state 13
+
+
+State 35
+
+   36 NotOrMinusChain: NOT .
+
+    $default  reduce using rule 36 (NotOrMinusChain)
+
+
+State 36
+
+   49 Term: ID .
+   50     | ID . '(' Exprs ')'
+   51     | ID . '{' Exprs '}'
+
+    '('  shift, and go to state 44
+    '{'  shift, and go to state 45
+
+    $default  reduce using rule 49 (Term)
+
+
+State 37
+
+   37 NotOrMinusChain: '-' .
+
+    $default  reduce using rule 37 (NotOrMinusChain)
+
+
+State 38
+
+   21 Stat: RETURN Expr .
+
+    $default  reduce using rule 21 (Stat)
+
+
+State 39
+
+   30 Expr: NotOrMinusChain . Term
+   38 NotOrMinusChain: NotOrMinusChain . NOT
+   39                | NotOrMinusChain . '-'
+
+    NOT  shift, and go to state 58
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 59
+
+    Term  go to state 60
+
+
+State 40
+
+   29 Expr: Term .
+   31     | Term . Termaddsv
+   32     | Term . Termmulsv
+   33     | Term . Termandsv
+   34     | Term . '>' Term
+   35     | Term . '=' Term
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    AND  shift, and go to state 61
+    '='  shift, and go to state 62
+    '['  shift, and go to state 63
+    '+'  shift, and go to state 64
+    '*'  shift, and go to state 65
+    '>'  shift, and go to state 66
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 29 (Expr)
+
+    Termaddsv  go to state 67
+    Termmulsv  go to state 68
+    Termandsv  go to state 69
+
+
+State 41
+
+   22 Stat: GOTO ID .
+
+    $default  reduce using rule 22 (Stat)
+
+
+State 42
+
+   23 Stat: IF Expr . GOTO ID
+
+    GOTO  shift, and go to state 70
+
+
+State 43
+
+   24 Stat: VAR ID . '=' Expr
+
+    '='  shift, and go to state 71
+
+
+State 44
+
+   50 Term: ID '(' . Exprs ')'
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 72
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+    Exprs            go to state 73
+    Exprcsv          go to state 74
+
+
+State 45
+
+   51 Term: ID '{' . Exprs '}'
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 72
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+    Exprs            go to state 75
+    Exprcsv          go to state 74
+
+
+State 46
+
+   20 Labeldef: ID ':' .
+
+    $default  reduce using rule 20 (Labeldef)
+
+
+State 47
+
+   46 Term: '(' Expr . ')'
+
+    ')'  shift, and go to state 76
+
+
+State 48
+
+    7 Def: ID '(' Pars ')' Stats END .
+
+    $default  reduce using rule 7 (Def)
+
+
+State 49
+
+   17 Stats: Stats Labeldefs . Stat ';'
+   19 Labeldefs: Labeldefs . Labeldef
+
+    RETURN  shift, and go to state 20
+    GOTO    shift, and go to state 21
+    IF      shift, and go to state 22
+    VAR     shift, and go to state 23
+    ID      shift, and go to state 24
+    NUM     shift, and go to state 25
+    '('     shift, and go to state 26
+
+    Labeldef  go to state 51
+    Stat      go to state 77
+    Lexpr     go to state 31
+    Term      go to state 32
+
+
+State 50
+
+   16 Stats: Stats Stat . ';'
+
+    ';'  shift, and go to state 78
+
+
+State 51
+
+   19 Labeldefs: Labeldefs Labeldef .
+
+    $default  reduce using rule 19 (Labeldefs)
+
+
+State 52
+
+   15 Stats: Labeldefs Stat . ';'
+
+    ';'  shift, and go to state 79
+
+
+State 53
+
+   14 Stats: Stat ';' .
+
+    $default  reduce using rule 14 (Stats)
+
+
+State 54
+
+   25 Stat: Lexpr '=' . Expr
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 80
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 55
+
+   28 Lexpr: Term '[' . Expr ']'
+   48 Term: Term '[' . Expr ']'
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 81
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 56
+
+   52 Term: Term '@' . '(' Exprs ')'
+
+    '('  shift, and go to state 82
+
+
+State 57
+
+    8 Def: ID '{' Pars '}' '(' Pars . ')' END
+    9    | ID '{' Pars '}' '(' Pars . ')' Stats END
+
+    ')'  shift, and go to state 83
+
+
+State 58
+
+   38 NotOrMinusChain: NotOrMinusChain NOT .
+
+    $default  reduce using rule 38 (NotOrMinusChain)
+
+
+State 59
+
+   39 NotOrMinusChain: NotOrMinusChain '-' .
+
+    $default  reduce using rule 39 (NotOrMinusChain)
+
+
+State 60
+
+   30 Expr: NotOrMinusChain Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 30 (Expr)
+
+
+State 61
+
+   44 Termandsv: AND . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 84
+
+
+State 62
+
+   35 Expr: Term '=' . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 85
+
+
+State 63
+
+   48 Term: Term '[' . Expr ']'
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 86
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 64
+
+   40 Termaddsv: '+' . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 87
+
+
+State 65
+
+   42 Termmulsv: '*' . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 88
+
+
+State 66
+
+   34 Expr: Term '>' . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 89
+
+
+State 67
+
+   31 Expr: Term Termaddsv .
+   41 Termaddsv: Termaddsv . '+' Term
+
+    '+'  shift, and go to state 90
+
+    $default  reduce using rule 31 (Expr)
+
+
+State 68
+
+   32 Expr: Term Termmulsv .
+   43 Termmulsv: Termmulsv . '*' Term
+
+    '*'  shift, and go to state 91
+
+    $default  reduce using rule 32 (Expr)
+
+
+State 69
+
+   33 Expr: Term Termandsv .
+   45 Termandsv: Termandsv . AND Term
+
+    AND  shift, and go to state 92
+
+    $default  reduce using rule 33 (Expr)
+
+
+State 70
+
+   23 Stat: IF Expr GOTO . ID
+
+    ID  shift, and go to state 93
+
+
+State 71
+
+   24 Stat: VAR ID '=' . Expr
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 94
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 72
+
+   53 Exprs: Expr .
+   55 Exprcsv: Expr . ','
+
+    ','  shift, and go to state 95
+
+    $default  reduce using rule 53 (Exprs)
+
+
+State 73
+
+   50 Term: ID '(' Exprs . ')'
+
+    ')'  shift, and go to state 96
+
+
+State 74
+
+   54 Exprs: Exprcsv . Expr
+   56 Exprcsv: Exprcsv . Expr ','
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 97
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+
+
+State 75
+
+   51 Term: ID '{' Exprs . '}'
+
+    '}'  shift, and go to state 98
+
+
+State 76
+
+   46 Term: '(' Expr ')' .
+
+    $default  reduce using rule 46 (Term)
+
+
+State 77
+
+   17 Stats: Stats Labeldefs Stat . ';'
+
+    ';'  shift, and go to state 99
+
+
+State 78
+
+   16 Stats: Stats Stat ';' .
+
+    $default  reduce using rule 16 (Stats)
+
+
+State 79
+
+   15 Stats: Labeldefs Stat ';' .
+
+    $default  reduce using rule 15 (Stats)
+
+
+State 80
+
+   25 Stat: Lexpr '=' Expr .
+
+    $default  reduce using rule 25 (Stat)
+
+
+State 81
+
+   28 Lexpr: Term '[' Expr . ']'
+   48 Term: Term '[' Expr . ']'
+
+    ']'  shift, and go to state 100
+
+
+State 82
+
+   52 Term: Term '@' '(' . Exprs ')'
+
+    NOT  shift, and go to state 35
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+    '-'  shift, and go to state 37
+
+    Expr             go to state 72
+    NotOrMinusChain  go to state 39
+    Term             go to state 40
+    Exprs            go to state 101
+    Exprcsv          go to state 74
+
+
+State 83
+
+    8 Def: ID '{' Pars '}' '(' Pars ')' . END
+    9    | ID '{' Pars '}' '(' Pars ')' . Stats END
+
+    END     shift, and go to state 102
+    RETURN  shift, and go to state 20
+    GOTO    shift, and go to state 21
+    IF      shift, and go to state 22
+    VAR     shift, and go to state 23
+    ID      shift, and go to state 24
+    NUM     shift, and go to state 25
+    '('     shift, and go to state 26
+
+    Stats      go to state 103
+    Labeldefs  go to state 28
+    Labeldef   go to state 29
+    Stat       go to state 30
+    Lexpr      go to state 31
+    Term       go to state 32
+
+
+State 84
+
+   44 Termandsv: AND Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 44 (Termandsv)
+
+
+State 85
+
+   35 Expr: Term '=' Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 35 (Expr)
+
+
+State 86
+
+   48 Term: Term '[' Expr . ']'
+
+    ']'  shift, and go to state 104
+
+
+State 87
+
+   40 Termaddsv: '+' Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 40 (Termaddsv)
+
+
+State 88
+
+   42 Termmulsv: '*' Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 42 (Termmulsv)
+
+
+State 89
+
+   34 Expr: Term '>' Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 34 (Expr)
+
+
+State 90
+
+   41 Termaddsv: Termaddsv '+' . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 105
+
+
+State 91
+
+   43 Termmulsv: Termmulsv '*' . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 106
+
+
+State 92
+
+   45 Termandsv: Termandsv AND . Term
+
+    ID   shift, and go to state 36
+    NUM  shift, and go to state 25
+    '('  shift, and go to state 26
+
+    Term  go to state 107
+
+
+State 93
+
+   23 Stat: IF Expr GOTO ID .
+
+    $default  reduce using rule 23 (Stat)
+
+
+State 94
+
+   24 Stat: VAR ID '=' Expr .
+
+    $default  reduce using rule 24 (Stat)
+
+
+State 95
+
+   55 Exprcsv: Expr ',' .
+
+    $default  reduce using rule 55 (Exprcsv)
+
+
+State 96
+
+   50 Term: ID '(' Exprs ')' .
+
+    $default  reduce using rule 50 (Term)
+
+
+State 97
+
+   54 Exprs: Exprcsv Expr .
+   56 Exprcsv: Exprcsv Expr . ','
+
+    ','  shift, and go to state 108
+
+    $default  reduce using rule 54 (Exprs)
+
+
+State 98
+
+   51 Term: ID '{' Exprs '}' .
+
+    $default  reduce using rule 51 (Term)
+
+
+State 99
+
+   17 Stats: Stats Labeldefs Stat ';' .
+
+    $default  reduce using rule 17 (Stats)
+
+
+State 100
+
+   28 Lexpr: Term '[' Expr ']' .
+   48 Term: Term '[' Expr ']' .
+
+    '='       reduce using rule 28 (Lexpr)
+    $default  reduce using rule 48 (Term)
+
+
+State 101
+
+   52 Term: Term '@' '(' Exprs . ')'
+
+    ')'  shift, and go to state 109
+
+
+State 102
+
+    8 Def: ID '{' Pars '}' '(' Pars ')' END .
+
+    $default  reduce using rule 8 (Def)
+
+
+State 103
+
+    9 Def: ID '{' Pars '}' '(' Pars ')' Stats . END
+   16 Stats: Stats . Stat ';'
+   17      | Stats . Labeldefs Stat ';'
+
+    END     shift, and go to state 110
+    RETURN  shift, and go to state 20
+    GOTO    shift, and go to state 21
+    IF      shift, and go to state 22
+    VAR     shift, and go to state 23
+    ID      shift, and go to state 24
+    NUM     shift, and go to state 25
+    '('     shift, and go to state 26
+
+    Labeldefs  go to state 49
+    Labeldef   go to state 29
+    Stat       go to state 50
+    Lexpr      go to state 31
+    Term       go to state 32
+
+
+State 104
+
+   48 Term: Term '[' Expr ']' .
+
+    $default  reduce using rule 48 (Term)
+
+
+State 105
+
+   41 Termaddsv: Termaddsv '+' Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 41 (Termaddsv)
+
+
+State 106
+
+   43 Termmulsv: Termmulsv '*' Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 43 (Termmulsv)
+
+
+State 107
+
+   45 Termandsv: Termandsv AND Term .
+   48 Term: Term . '[' Expr ']'
+   52     | Term . '@' '(' Exprs ')'
+
+    '['  shift, and go to state 63
+    '@'  shift, and go to state 56
+
+    $default  reduce using rule 45 (Termandsv)
+
+
+State 108
+
+   56 Exprcsv: Exprcsv Expr ',' .
+
+    $default  reduce using rule 56 (Exprcsv)
+
+
+State 109
+
+   52 Term: Term '@' '(' Exprs ')' .
+
+    $default  reduce using rule 52 (Term)
+
+
+State 110
+
+    9 Def: ID '{' Pars '}' '(' Pars ')' Stats END .
+
+    $default  reduce using rule 9 (Def)
