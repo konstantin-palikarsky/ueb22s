@@ -1,0 +1,16 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#include "tree.h"
+#include "gen_helpers.h"
+%}
+
+%start stat
+%term OP_RETURN=0 
+
+%%
+stat:   ret                             # 0 #
+
+%%
