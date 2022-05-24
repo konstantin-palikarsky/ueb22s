@@ -6,6 +6,7 @@
 
 #include "oxout.tab.h"
 #include "symtab.h"
+#include "tree.h"
 %}
 
 identifier [A-Za-z_][A-Za-z0-9_]*
@@ -18,7 +19,7 @@ comment "//".*
 
 end	     return END; 
 return	 return RETURN; 
-goto      return GOTO; 
+goto     return GOTO; 
 if	     return IF; 
 var	     return VAR; 
 not	     return NOT; 
@@ -42,8 +43,8 @@ and	     return AND;
 
 {identifier}     return ID; @{ @ID.name@ = strdup(yytext); @}
  
-{hex}      	     return NUM; 
-{dec}  	         return NUM; 
+{hex}      	     return NUM; @{ @NUM.val@ = strtol(yytext + 1, NULL, 16); @}
+{dec}  	         return NUM; @{ @NUM.val@ = strtol(yytext, NULL, 10); @}
 
 {whitespace} ;
 {comment}    ;

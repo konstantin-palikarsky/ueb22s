@@ -1,16 +1,58 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
 
 #include "tree.h"
-#include "gen_helpers.h"
+#include "asm_gen.h"
 %}
 
 %start stat
-%term OP_RETURN=0 
+%term OP_RETURN = 0 OP_ARRAY_ACCESS=1 OP_ADD=2 OP_MUL=3 OP_AND=4 OP_GREATER=5 OP_EQUAL=6 OP_NOT=7 OP_MINUS=8 OP_NUM=9 OP_ID=10
 
 %%
+
 stat:   ret                             # 0 #
 
+ret:    OP_RETURN(expr)                 # 1 #   ret_val(bnode->reg);
+
+expr:   const                           # 1 #   mov(lts(bnode->value), bnode->reg);
+
+expr:   OP_ARRAY_ACCESS(expr,expr)      # 1 #   array_access_index(bnode->children[0]->reg, bnode->children[1]->reg, (bnode->children[0]->reg));  
+
+expr:   OP_ADD(expr, expr)              # 1 #   add(bnode->children[1]->reg, bnode->children[0]->reg);
+expr:   OP_ADD(const, expr)             # 1 #   add(lts(bnode->children[0]->value), bnode->children[1]->reg); mov(bnode->children[1]->reg, bnode->reg); 
+expr:   OP_ADD(expr, const)             # 1 #   add(lts(bnode->children[1]->value), bnode->children[0]->reg);
+
+expr:   OP_MUL(expr, expr)              # 1 #   mul(bnode->children[1]->reg, bnode->children[0]->reg);
+expr:   OP_MUL(const, expr)             # 1 #   mul(lts(bnode->children[0]->value), bnode->children[1]->reg); mov(bnode->children[1]->reg, bnode->reg);
+expr:   OP_MUL(expr, const)             # 1 #   mul(lts(bnode->children[1]->value), bnode->children[0]->reg);
+
+
+expr:   OP_AND(expr, expr)              # 1 #   and(bnode->children[1]->reg, bnode->children[0]->reg);
+expr:   OP_AND(const, expr)             # 1 #   and(lts(bnode->children[0]->value), bnode->children[1]->reg); mov(bnode->children[1]->reg, bnode->reg); 
+expr:   OP_AND(expr, const)             # 1 #   and(lts(bnode->children[1]->value), bnode->children[0]->reg);
+
+expr:   OP_GREATER(expr, expr)          # 1 #   gt(bnode->children[1]->reg, bnode->children[0]->reg, bnode->reg); 
+expr:   OP_GREATER(expr, const)         # 1 #   gt_i(bnode->children[1]->value, bnode->children[0]->reg, bnode->reg);
+
+
+expr:   OP_EQUAL(expr, expr)            # 1 #   eq(bnode->children[1]->reg, bnode->children[0]->reg, bnode->reg);
+expr:   OP_EQUAL(const, expr)           # 1 #   eq_i(bnode->children[0]->value, bnode->children[1]->reg, bnode->reg); 
+expr:   OP_EQUAL(expr, const)           # 1 #   eq_i(bnode->children[1]->value, bnode->children[0]->reg, bnode->reg);
+
+expr:   OP_NOT(expr)                    # 1 #   not(bnode->children[0]->reg); 
+expr:   OP_MINUS(expr)                  # 1 #   neg(bnode->reg); 
+expr:   OP_ID                           # 1 #   if (bnode->par_index != -1) mov(nth_param_register(bnode->par_index), bnode->reg); 
+
+const:  OP_NUM                          # 0 #
+const:  OP_ADD(const, const)            # 0 #   bnode->value = bnode->children[0]->value + bnode->children[1]->value;
+const:  OP_MUL(const, const)            # 0 #   bnode->value = bnode->children[0]->value * bnode->children[1]->value;
+const:  OP_AND(const, const)            # 0 #   bnode->value = bnode->children[0]->value & bnode->children[1]->value;
+const:  OP_GREATER(const, const)        # 0 #   bnode->value = bnode->children[0]->value > bnode->children[1]->value ? 1 : 0;
+const:  OP_EQUAL(const, const)          # 0 #   bnode->value = bnode->children[0]->value == bnode->children[1]->value ? 1 : 0;
+const:  OP_NOT(const)                   # 0 #   bnode->value = ~bnode->children[0]->value;
+const:  OP_MINUS(const)                 # 0 #   bnode->value = -bnode->children[0]->value;
+
+
 %%
+
+

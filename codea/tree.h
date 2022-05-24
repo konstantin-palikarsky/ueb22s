@@ -1,43 +1,55 @@
-#ifndef CODE
-typedef struct burm_state *STATEPTR_TYPE; 
-#endif
+#include <stdlib.h>
 
-typedef enum  {
+typedef struct burm_state *STATEPTR_TYPE;
+
+typedef enum
+{
     OP_RETURN = 0,
-    OP_ADDRESS_READ,
+    OP_ARRAY_ACCESS,
+
     OP_ADD,
     OP_MUL,
     OP_AND,
-    OP_LESS_EQUAL,
-    OP_NOT_EQUAL,
+
+    OP_GREATER,
+    OP_EQUAL,
+
     OP_NOT,
     OP_MINUS,
-    OP_NUMBER,
+
+    OP_NUM,
     OP_ID
-} operators_t;
+} op_type_t;
 
 typedef struct tree_t
 {
-    int op;
-    struct tree_t *children[2];
-    STATEPTR_TYPE state;
+    op_type_t operator;
 
-    char *identifierName;
+    int par_index;
+    char *name;
     long value;
 
-    int parameterIndex;
-    char *regStor;
+    char *reg;
+
+    struct tree_t *children[2];
+    struct tree_t *parent;
+    STATEPTR_TYPE state_label;
+
 } tree_t;
 
-typedef tree_t *NODEPTR_TYPE;
-
-#define OP_LABEL(p) ((p)->op)
+/* macros for burg */
+#define NODEPTR_TYPE tree_t *
+#define OP_LABEL(p) ((p)->operator)
 #define LEFT_CHILD(p) ((p)->children[0])
 #define RIGHT_CHILD(p) ((p)->children[1])
-#define STATE_LABEL(p) ((p)->state)
+#define STATE_LABEL(p) ((p)->state_label)
 #define PANIC printf
 
-tree_t *createNode(operators_t op, tree_t *left, tree_t *right);
-tree_t *createIdentifierLeaf(char *name, int parameterIndex);
-tree_t *createNumericalLeaf(long value);
+/* Return a tree_t struct with given operator, left and right child */
+tree_t *node(op_type_t operator, tree_t * left, tree_t *right);
 
+/* Return a tree_t struct with the given name and par_index, and NULL children */
+tree_t *id_leaf(char *name, int par_index);
+
+/* Return a tree_t struct with the given value, and NULL children */
+tree_t *num_leaf(long value);

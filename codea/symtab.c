@@ -1,4 +1,3 @@
-#include <string.h>
 #include "symtab.h"
 
 /* internal function to malloc list_t pointers*/
@@ -7,6 +6,68 @@ list_t *create_node()
     // fprintf(stdout, "segfault: for '%s\n'", "create_node");
 
     return (list_t *)malloc(sizeof(list_t));
+}
+
+list_t *add_par_node(list_t *list, char *identifier, id_type_t type)
+{
+    list_t *current = list;
+
+    // appending to empty list
+    if (current == NULL)
+    {
+        current = create_node();
+        current->id = strdup(identifier);
+        current->type = type;
+        current->next = NULL;
+        current->param = true;
+
+        return current;
+    }
+    // check if identifier is duplicate for root
+    duplicate_check(current, identifier);
+
+    // check if list contains duplicate identifier and sets currrent to last node in list as a side effect
+    while (current->next != NULL)
+    {
+        current = current->next;
+        duplicate_check(current, identifier);
+    }
+
+    list_t *new = create_node();
+    new->id = strdup(identifier);
+    new->type = type;
+    new->next = NULL;
+    new->param = true;
+    current->next = new;
+
+    // return original root pointer
+    return list;
+}
+
+int find_param_index(list_t *list, char *key)
+{
+    list_t *current = list;
+
+    int index = 0;
+
+    while (current != NULL)
+    {
+
+        if (current->param)
+        {
+
+            if (strcmp(current->id, key) == 0)
+            {
+                return index;
+            }
+
+            index++;
+        }
+
+        current = current->next;
+    }
+
+    return -1;
 }
 
 void duplicate_check(list_t *current, char *identifier)
@@ -20,6 +81,32 @@ void duplicate_check(list_t *current, char *identifier)
     }
 
     fprintf(stdout, "Duplicate identifier definition detected for '%s'.\n", identifier);
+    exit(3);
+}
+
+void visibility_check(list_t *list, char *identifier, id_type_t type)
+{
+    // fprintf(stdout, "segfault: for '%s' \n", "visibility_check");
+
+    if (list == NULL)
+    {
+        fprintf(stderr, "Error: visibility check for identifier '%s' on empty list\n", identifier);
+        exit(3);
+    }
+
+    list_t *current = list;
+
+    while (current != NULL)
+    {
+        // if the identifier of given type is found check succeeds
+        if (strcmp(current->id, identifier) == 0 && current->type == type)
+        {
+            return;
+        }
+        current = current->next;
+    }
+
+    fprintf(stderr, "Error: visibility check for identifier '%s' failed, identifier is not visible in this context\n", identifier);
     exit(3);
 }
 
@@ -40,13 +127,27 @@ list_t *merge_lists(list_t *first, list_t *second)
 
     while (current_first != NULL)
     {
-        new = add_node(new, current_first->id, current_first->type);
+        if (current_first->param)
+        {
+            new = add_par_node(new, current_first->id, current_first->type);
+        }
+        else
+        {
+            new = add_node(new, current_first->id, current_first->type);
+        }
         current_first = current_first->next;
     }
 
     while (current_second != NULL)
     {
-        new = add_node(new, current_second->id, current_second->type);
+        if (current_second->param)
+        {
+            new = add_par_node(new, current_second->id, current_second->type);
+        }
+        else
+        {
+            new = add_node(new, current_second->id, current_second->type);
+        }
         current_second = current_second->next;
     }
 
@@ -86,34 +187,14 @@ list_t *add_node(list_t *list, char *identifier, id_type_t type)
     new->id = strdup(identifier);
     new->type = type;
     new->next = NULL;
+    new->param = false;
     current->next = new;
 
     // return original root pointer
     return list;
 }
 
-void visibility_check(list_t *list, char *identifier, id_type_t type)
+list_t *param_node(char *id)
 {
-    // fprintf(stdout, "segfault: for '%s' \n", "visibility_check");
-
-    if (list == NULL)
-    {
-        fprintf(stderr, "Error: visibility check for identifier '%s' on empty list", identifier);
-        exit(3);
-    }
-
-    list_t *current = list;
-
-    while (current != NULL)
-    {
-        // if the identifier of given type is found check succeeds
-        if (strcmp(current->id, identifier) == 0 && current->type == type)
-        {
-            return;
-        }
-        current = current->next;
-    }
-
-    fprintf(stderr, "Error: visibility check for identifier '%s' failed, identifier is not visible in this context", identifier);
-    exit(3);
+    return add_par_node(empty_list(), id, VARIABLE);
 }
